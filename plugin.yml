@@ -1,0 +1,9 @@
+name: AdvancementsBingo
+author: Natsuko
+version: 0.1
+main: com.natsuko.advancementsbingo.Plugin
+
+commands:
+  ab:
+    description: Your description
+    usage: /ab <add/remove/teams/pick/list/start>
