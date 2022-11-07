@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public class Game
 
     // The advancements picker objects
     private final AdvancementsPicker advancementsPicker;
+
+    private Scoreboard scoreboard;
 
     // The location of the waiting room
     public final Location WAITING_ROOM = new Location(Bukkit.getWorld("world"), 0, 201, 0);
@@ -48,6 +51,32 @@ public class Game
         this.createSpawnRoom();
         // We teleport all online players (if any) in the spawn room
         this.teleportPlayersInSpawnRoom();
+
+        this.initializeScoreboard();
+    }
+
+    private void initializeScoreboard()
+    {
+        this.scoreboard = Bukkit.getScoreboardManager()
+                .getNewScoreboard();
+
+        scoreboard.registerNewObjective("Score", Criteria.DUMMY, "Score", RenderType.INTEGER)
+                .setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        scoreboard.registerNewTeam("Red")
+                .setColor(ChatColor.RED);
+        scoreboard.registerNewTeam("Blue")
+                .setColor(ChatColor.BLUE);
+
+        scoreboard.getObjective("Score")
+                .getScore(ChatColor.BLUE + "Blue        ")
+                .setScore(0);
+        scoreboard.getObjective("Score")
+                .getScore(ChatColor.RED + "Red        ")
+                .setScore(0);
+
+        Bukkit.getOnlinePlayers()
+                .forEach(player -> player.setScoreboard(scoreboard));
     }
 
     // Method to go from the "NOT_STARTED" to the "ADVANCEMENTS_PICKED" status
@@ -126,12 +155,18 @@ public class Game
             if (team.equalsIgnoreCase("blue"))
             {
                 blueTeamPlayers.add(player);
+                this.scoreboard
+                        .getTeam("Blue")
+                        .addEntry(player.getName());
                 return true;
             }
 
             if (team.equalsIgnoreCase("red"))
             {
                 redTeamPlayers.add(player);
+                this.scoreboard
+                        .getTeam("Red")
+                        .addEntry(player.getName());
                 return true;
             }
         }
@@ -207,6 +242,9 @@ public class Game
                 // If the advancement has not been completed yet
                 if (status == null)
                 {
+                    // Useful later
+                    Score score;
+
                     // We tell the game the advancement has been done by the player's team
                     switch (team)
                     {
@@ -214,12 +252,18 @@ public class Game
                             getAdvancementsPicker()
                                     .getPickedAdvancements()
                                     .replace(advancement, Team.RED);
+                            score = scoreboard.getObjective("Score")
+                                    .getScore(ChatColor.RED + "Red        ");
+                            score.setScore(score.getScore() + 1);
                             break;
 
                         case BLUE:
                             getAdvancementsPicker()
                                     .getPickedAdvancements()
                                     .replace(advancement, Team.BLUE);
+                            score = scoreboard.getObjective("Score")
+                                    .getScore(ChatColor.BLUE + "Blue        ");
+                            score.setScore(score.getScore() + 1);
                             break;
 
                         default:
@@ -291,7 +335,7 @@ public class Game
         }
         while (location.getBlock().getType().equals(Material.AIR));
 
-        return y+1;
+        return y + 1;
     }
 
     public GameStatus getGameStatus()
