@@ -46,6 +46,9 @@ public class AdvancementsBingoCommandHandler implements CommandExecutor
             case "start":
                 return StartCommandHandler.onStartCommand(commandSender, command, label, args, plugin);
 
+            case "end":
+                return EndCommandHandler.onEndCommand(commandSender, command, label, args, plugin);
+
             case "list":
                 return ListCommandHandler.onListCommand(commandSender, command, label, args, plugin);
 

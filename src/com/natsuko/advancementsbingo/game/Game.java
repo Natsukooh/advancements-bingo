@@ -81,23 +81,38 @@ public class Game
         // A total of 25 means all advancements are done
         if (redTeamScore + blueTeamScore == 25)
         {
-            // We teleport all players back to the waiting room
-            blueTeamPlayers.forEach(player -> player.teleport(WAITING_ROOM));
-            redTeamPlayers.forEach(player -> player.teleport(WAITING_ROOM));
-
-            // We announce the winner
-            if (redTeamScore > blueTeamScore)
-            {
-                Bukkit.broadcastMessage("Team " + ChatColor.RED + "Red" + ChatColor.WHITE + " wins the match !");
-            }
-            else
-            {
-                Bukkit.broadcastMessage("Team " + ChatColor.BLUE + "Blue" + ChatColor.WHITE + " wins the match !");
-            }
-
-            // We change the status
-            this.gameStatus = GameStatus.ENDING;
+            // The actions to do when ending the game are done in another method
+            this.forceGameEnd();
         }
+    }
+
+    // Method to effectively end a game
+    public void forceGameEnd()
+    {
+        // We get the scores
+        int redTeamScore = this.getTeamScore(Team.RED);
+        int blueTeamScore = this.getTeamScore(Team.BLUE);
+
+        // We teleport all players back to the waiting room
+        blueTeamPlayers.forEach(player -> player.teleport(WAITING_ROOM));
+        redTeamPlayers.forEach(player -> player.teleport(WAITING_ROOM));
+
+        // We announce the winner
+        if (redTeamScore > blueTeamScore)
+        {
+            Bukkit.broadcastMessage("Team " + ChatColor.RED + "Red" + ChatColor.WHITE + " wins the match !");
+        }
+        else if (redTeamScore < blueTeamScore)
+        {
+            Bukkit.broadcastMessage("Team " + ChatColor.BLUE + "Blue" + ChatColor.WHITE + " wins the match !");
+        }
+        else
+        {
+            Bukkit.broadcastMessage("The game ends in a draw !");
+        }
+
+        // We change the status
+        this.gameStatus = GameStatus.ENDING;
     }
 
     // Method to add a player to a team
