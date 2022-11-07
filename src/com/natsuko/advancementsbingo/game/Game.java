@@ -27,6 +27,7 @@ public class Game
     // The advancements picker objects
     private final AdvancementsPicker advancementsPicker;
 
+    // The scoreboard to display live score during a game
     private Scoreboard scoreboard;
 
     // The location of the waiting room
@@ -52,22 +53,27 @@ public class Game
         // We teleport all online players (if any) in the spawn room
         this.teleportPlayersInSpawnRoom();
 
+        // We initialize everything related to the game's scoreboard
         this.initializeScoreboard();
     }
 
     private void initializeScoreboard()
     {
+        // We create a new scoreboard
         this.scoreboard = Bukkit.getScoreboardManager()
                 .getNewScoreboard();
 
+        // We create the objective to display
         scoreboard.registerNewObjective("Score", Criteria.DUMMY, "Score", RenderType.INTEGER)
                 .setDisplaySlot(DisplaySlot.SIDEBAR);
 
+        // We add both teams to the objective
         scoreboard.registerNewTeam("Red")
                 .setColor(ChatColor.RED);
         scoreboard.registerNewTeam("Blue")
                 .setColor(ChatColor.BLUE);
 
+        // We display both teams' scores
         scoreboard.getObjective("Score")
                 .getScore(ChatColor.BLUE + "Blue        ")
                 .setScore(0);
@@ -75,6 +81,7 @@ public class Game
                 .getScore(ChatColor.RED + "Red        ")
                 .setScore(0);
 
+        // We display the objective to all online players
         Bukkit.getOnlinePlayers()
                 .forEach(player -> player.setScoreboard(scoreboard));
     }
@@ -246,12 +253,15 @@ public class Game
                     Score score;
 
                     // We tell the game the advancement has been done by the player's team
+                    // We also have to update the game's scoreboard
                     switch (team)
                     {
                         case RED:
                             getAdvancementsPicker()
                                     .getPickedAdvancements()
                                     .replace(advancement, Team.RED);
+
+                            // The team's score is incremented
                             score = scoreboard.getObjective("Score")
                                     .getScore(ChatColor.RED + "Red        ");
                             score.setScore(score.getScore() + 1);
@@ -261,6 +271,8 @@ public class Game
                             getAdvancementsPicker()
                                     .getPickedAdvancements()
                                     .replace(advancement, Team.BLUE);
+
+                            // The team's score is incremented
                             score = scoreboard.getObjective("Score")
                                     .getScore(ChatColor.BLUE + "Blue        ");
                             score.setScore(score.getScore() + 1);
