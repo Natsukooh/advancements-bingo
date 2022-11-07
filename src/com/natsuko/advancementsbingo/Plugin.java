@@ -2,6 +2,7 @@ package com.natsuko.advancementsbingo;
 
 import com.natsuko.advancementsbingo.commands.AdvancementsBingoCommandHandler;
 import com.natsuko.advancementsbingo.events.AdvancementEventListener;
+import com.natsuko.advancementsbingo.events.InventoryClickEventListener;
 import com.natsuko.advancementsbingo.events.PlayerJoinEventListener;
 import com.natsuko.advancementsbingo.game.Game;
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ public class Plugin extends JavaPlugin
         // We register the events that we are listening to
         this.getServer().getPluginManager().registerEvents(new AdvancementEventListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinEventListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryClickEventListener(this), this);
 
         // We register the commands that can be used by the players
         this.getCommand("ab").setExecutor(new AdvancementsBingoCommandHandler(this));
