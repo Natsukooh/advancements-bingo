@@ -184,9 +184,28 @@ public class Game
 
     // Method to remove a player from a team
     // Returns true if the player was part of a team, and false otherwise
+    // We must remove the player from the team (the blueTeamPlayers or redTeamPlayers list), and also from the scoreboard team
     public boolean removePlayerFromTeam(Player player)
     {
-        return redTeamPlayers.remove(player) || blueTeamPlayers.remove(player);
+        switch (getPlayerTeam(player))
+        {
+            case BLUE:
+                this.scoreboard
+                        .getTeam("Blue")
+                        .removeEntry(player.getName());
+                this.blueTeamPlayers
+                        .remove(player);
+
+            case RED:
+                this.scoreboard
+                        .getTeam("Red")
+                        .removeEntry(player.getName());
+                this.redTeamPlayers
+                        .remove(player);
+
+            default:
+                return false;
+        }
     }
 
     // Method to check if a player is part of a team
