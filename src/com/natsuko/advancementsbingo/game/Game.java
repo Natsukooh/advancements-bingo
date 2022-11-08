@@ -1,11 +1,11 @@
 package com.natsuko.advancementsbingo.game;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
@@ -88,19 +88,39 @@ public class Game
 
     // Method to go from the "NOT_STARTED" to the "ADVANCEMENTS_PICKED" status
     // Calls the pickAdvancements method of the advancement picker and changes the status
+    // Also displays a title to all the players
     public void pickAdvancements()
     {
         this.advancementsPicker.pickAdvancements();
+
+        redTeamPlayers.forEach(player -> {
+            player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
+        });
+        blueTeamPlayers.forEach(player -> {
+            player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
+        });
 
         this.gameStatus = GameStatus.ADVANCEMENTS_PICKED;
     }
 
     // Method to go from the "ADVANCEMENTS_PICKED" to the "PLAYING" status
     // We teleport all players to the spawn and change the status
+    // We also display a title and play a sound to all the players
     public void start()
     {
         blueTeamPlayers.forEach(player -> player.teleport(SPAWN));
         redTeamPlayers.forEach(player -> player.teleport(SPAWN));
+
+        redTeamPlayers.forEach(player -> {
+            player.sendTitle("Game starts", "May the odds be ever in your favor !", 10, 70, 20);
+            player.playSound(player.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 0.6F, 0.5F);
+        });
+        blueTeamPlayers.forEach(player -> {
+            player.sendTitle("Game starts", "May the odds be ever in your favor !", 10, 70, 20);
+            player.playSound(player.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 0.6F, 0.5F);
+        });
 
         this.gameStatus = GameStatus.PLAYING;
     }
@@ -134,21 +154,64 @@ public class Game
         redTeamPlayers.forEach(player -> player.teleport(WAITING_ROOM));
 
         // We announce the winner
+        // In the chat, but also by displaying a title to all the players
+        // We also send fireworks of the color of the winner
         if (redTeamScore > blueTeamScore)
         {
             Bukkit.broadcastMessage("Team " + ChatColor.RED + "Red" + ChatColor.WHITE + " wins the match !");
+            redTeamPlayers.forEach(player -> {
+                player.sendTitle("Team " + ChatColor.RED + "Red" + ChatColor.WHITE + " wins the match !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            blueTeamPlayers.forEach(player -> {
+                player.sendTitle("Team " + ChatColor.RED + "Red" + ChatColor.WHITE + " wins the match !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            endOfGameFireworks(Team.RED);
         }
         else if (redTeamScore < blueTeamScore)
         {
             Bukkit.broadcastMessage("Team " + ChatColor.BLUE + "Blue" + ChatColor.WHITE + " wins the match !");
+            redTeamPlayers.forEach(player -> {
+                player.sendTitle("Team " + ChatColor.BLUE + "Blue" + ChatColor.WHITE + " wins the match !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            blueTeamPlayers.forEach(player -> {
+                player.sendTitle("Team " + ChatColor.BLUE + "Blue" + ChatColor.WHITE + " wins the match !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            endOfGameFireworks(Team.BLUE);
         }
         else
         {
             Bukkit.broadcastMessage("The game ends in a draw !");
+            redTeamPlayers.forEach(player -> {
+                player.sendTitle("The game ends in a draw !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            blueTeamPlayers.forEach(player -> {
+                player.sendTitle("The game ends in a draw !", "Congratulations, everyone !", 10, 70, 20);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 0.5F);
+            });
+            endOfGameFireworks(null);
         }
 
         // We change the status
         this.gameStatus = GameStatus.ENDING;
+    }
+
+    // Method to summon a firework of the desired color
+    // To use when a game ends to add visual effects
+    private void endOfGameFireworks(Team team)
+    {
+        Location location = new Location(Bukkit.getWorld("world"), 0, 203, 0);
+        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+        FireworkMeta meta = firework.getFireworkMeta();
+
+        meta.setPower(2);
+        meta.addEffect(FireworkEffect.builder().withColor(team == null ? Color.WHITE : (team.equals(Team.RED) ? Color.RED : Color.BLUE)).flicker(true).build());
+
+        firework.setFireworkMeta(meta);
     }
 
     // Method to add a player to a team
@@ -273,6 +336,8 @@ public class Game
 
                     // We tell the game the advancement has been done by the player's team
                     // We also have to update the game's scoreboard
+                    // Players from the same team hear a level up sound
+                    // Players from the other team hear a wolf grown sound
                     switch (team)
                     {
                         case RED:
@@ -284,6 +349,10 @@ public class Game
                             score = scoreboard.getObjective("Score")
                                     .getScore(ChatColor.RED + "Red        ");
                             score.setScore(score.getScore() + 1);
+
+                            redTeamPlayers.forEach(player1 -> player1.playSound(player1.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2f, 0.5F));
+                            blueTeamPlayers.forEach(player1 -> player1.playSound(player1.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.2f, 0.5F));
+
                             break;
 
                         case BLUE:
@@ -295,6 +364,10 @@ public class Game
                             score = scoreboard.getObjective("Score")
                                     .getScore(ChatColor.BLUE + "Blue        ");
                             score.setScore(score.getScore() + 1);
+
+                            blueTeamPlayers.forEach(player1 -> player1.playSound(player1.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2f, 0.5F));
+                            redTeamPlayers.forEach(player1 -> player1.playSound(player1.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.2f, 0.5F));
+
                             break;
 
                         default:
