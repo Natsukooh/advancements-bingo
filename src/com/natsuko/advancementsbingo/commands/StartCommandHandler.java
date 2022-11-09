@@ -7,18 +7,22 @@ import org.bukkit.command.CommandSender;
 
 // Class to handle the /ab pick command
 // The command is used to start the game
-public class StartCommandHandler
+public class StartCommandHandler extends CommandHandler
 {
+
+    public StartCommandHandler()
+    {
+        super(2);
+    }
 
     // Method called when the /ab start command is issued
     // The game state must be "ADVANCEMENTS_PICKED" and nothing else
-    public static boolean onStartCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
+    protected void executeCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
     {
         // The command must be 1 argument long
         if (args.length != 1)
         {
             commandSender.sendMessage("Error: incorrect number of arguments. Usage: /ab start");
-            return false;
         }
 
         // We check that the game status is "ADVANCEMENTS_PICKED"
@@ -31,10 +35,8 @@ public class StartCommandHandler
         else
         {
             commandSender.sendMessage("Error: that command is only possible if the advancements are picked. Use the /ab pick command to pick them.");
-            return true;
         }
 
-        return true;
     }
 
 }

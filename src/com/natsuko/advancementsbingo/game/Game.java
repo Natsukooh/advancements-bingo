@@ -27,6 +27,9 @@ public class Game
     // The advancements picker objects
     private final AdvancementsPicker advancementsPicker;
 
+    // The permissions manager object
+    private final PermissionsManager permissionsManager;
+
     // The scoreboard to display live score during a game
     private Scoreboard scoreboard;
 
@@ -47,6 +50,9 @@ public class Game
 
         // Advancements picker is instanced
         this.advancementsPicker = new AdvancementsPicker();
+
+        // Permissions manager is instanced
+        this.permissionsManager = new PermissionsManager();
 
         // We create the spawn room
         this.createSpawnRoom();
@@ -460,5 +466,10 @@ public class Game
     public AdvancementsPicker getAdvancementsPicker()
     {
         return advancementsPicker;
+    }
+
+    public PermissionsManager getPermissionsManager()
+    {
+        return permissionsManager;
     }
 }

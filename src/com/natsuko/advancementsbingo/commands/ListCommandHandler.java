@@ -22,18 +22,22 @@ import java.util.stream.Collectors;
 
 // Class to handle the /ab list command
 // The command is used to list all the 25 advancements picked for the game, as an inventory with each advancement as an item
-public class ListCommandHandler
+public class ListCommandHandler extends CommandHandler
 {
+
+    public ListCommandHandler()
+    {
+        super(0);
+    }
 
     // Method called when the /ab list command is issued
     // We want the status to be something else than "NOT_STARTED"
-    public static boolean onListCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
+    protected void executeCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
     {
         // The command must be 1 argument length
         if (args.length != 1)
         {
             commandSender.sendMessage("Error: incorrect number of arguments. Usage: /ab list");
-            return false;
         }
 
         // We check that the status is not "NOT_STARTED"
@@ -96,12 +100,12 @@ public class ListCommandHandler
                 // So on each row, we want the items on the slots 2 to 6
                 // The count variable is used to iterate through the advancements list
                 int count = 0;
-                for(int i = 2; i < 45; i+=9)
+                for (int i = 2; i < 45; i += 9)
                 {
-                    for(int j = 0; j < 5; j++)
+                    for (int j = 0; j < 5; j++)
                     {
                         // We call the getAdvancementItemDisplay method to get an item corresponding to the advancement to display
-                        advancementsList.setItem(i+j, getAdvancementItemDisplay(advancements.get(count), plugin.getGame().getAdvancementsPicker().getPickedAdvancements()));
+                        advancementsList.setItem(i + j, getAdvancementItemDisplay(advancements.get(count), plugin.getGame().getAdvancementsPicker().getPickedAdvancements()));
 
                         // Don't forget to increase the count to iterate over all the advancements
                         count++;
@@ -116,10 +120,8 @@ public class ListCommandHandler
         else
         {
             commandSender.sendMessage("Error: that command is only possible if the advancements are picked.");
-            return true;
         }
 
-        return true;
     }
 
     // Method to create an item representing an advancement

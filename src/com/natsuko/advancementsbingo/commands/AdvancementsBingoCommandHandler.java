@@ -28,33 +28,8 @@ public class AdvancementsBingoCommandHandler implements CommandExecutor
             return false;
         }
 
-        // Depending on which subcommand is issued, we call the right method from the right class
-        switch (args[0])
-        {
-            case "add":
-                return AddCommandHandler.onAddCommand(commandSender, command, label, args, plugin);
-
-            case "remove":
-                return RemoveCommandHandler.onRemoveCommand(commandSender, command, label, args, plugin);
-
-            case "teams":
-                return TeamsCommandHandler.onTeamsCommand(commandSender, command, label, args, plugin);
-
-            case "pick":
-                return PickCommandHandler.onPickCommand(commandSender, command, label, args, plugin);
-
-            case "start":
-                return StartCommandHandler.onStartCommand(commandSender, command, label, args, plugin);
-
-            case "end":
-                return EndCommandHandler.onEndCommand(commandSender, command, label, args, plugin);
-
-            case "list":
-                return ListCommandHandler.onListCommand(commandSender, command, label, args, plugin);
-
-            default:
-                break;
-        }
+        // we create an instance of the right CommandHandler subclass to handle the command
+        CommandHandler.build(args[0]).handle(commandSender, command, label, args, plugin);
 
         return true;
     }

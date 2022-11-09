@@ -10,18 +10,22 @@ import java.util.stream.Collectors;
 
 // Class to handle the /ab pick command
 // This command lists the teams' players to the entity that sent the command
-public class TeamsCommandHandler
+public class TeamsCommandHandler extends CommandHandler
 {
+
+    public TeamsCommandHandler()
+    {
+        super(0);
+    }
 
     // Method called when the /ab teams command is issued
     // The command can be called at any game status, so no need to check for it
-    public static boolean onTeamsCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
+    protected void executeCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
     {
         // The command must be 1 argument long
         if (args.length != 1)
         {
             commandSender.sendMessage("Error : incorrect number of arguments. Usage: /ab teams");
-            return false;
         }
 
         // We get the list of the red players
@@ -41,8 +45,6 @@ public class TeamsCommandHandler
         // Then we send the message to the commandSender
         commandSender.sendMessage("Red team: " + redTeam);
         commandSender.sendMessage("Blue team: " + blueTeam);
-
-        return true;
     }
 
 }

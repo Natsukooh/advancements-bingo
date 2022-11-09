@@ -7,19 +7,23 @@ import org.bukkit.entity.Player;
 
 // Class to handle the /ab remove <player> command
 // The command is used to remove a player from the team they're part of
-public class RemoveCommandHandler
+public class RemoveCommandHandler extends CommandHandler
 {
+
+    public RemoveCommandHandler()
+    {
+        super(1);
+    }
 
     // Method called when the /ab remove command is issued
     // It must be a /ab remove <player> command, with <player> the name of an online player
     // If the player is found and part of a team, they're removed from the team
-    public static boolean onRemoveCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
+    protected void executeCommand(CommandSender commandSender, Command command, String label, String[] args, Plugin plugin)
     {
         // The command must be 2 arguments long
         if (args.length != 2)
         {
             commandSender.sendMessage("Error: incorrect number of arguments. Usage: /ab remove <player>");
-            return false;
         }
 
         // We get the desired player
@@ -30,20 +34,17 @@ public class RemoveCommandHandler
         if (targetedPlayer == null)
         {
             commandSender.sendMessage("Error: player not found.");
-            return false;
         }
 
         // If the player was found, we try to remove them from the team they're part of
         if (!plugin.getGame().removePlayerFromTeam(targetedPlayer))
         {
             commandSender.sendMessage("Error: the requested player is not registered in any team.");
-            return false;
         }
         // But if the result is false, that means the player wasn't part of any team, so we send an error message
         else
         {
             commandSender.sendMessage("Player successfully removed from their team.");
-            return true;
         }
     }
 
