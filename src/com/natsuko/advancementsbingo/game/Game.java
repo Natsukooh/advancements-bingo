@@ -94,7 +94,7 @@ public class Game
 
     // Method to go from the "NOT_STARTED" to the "ADVANCEMENTS_PICKED" status
     // Calls the pickAdvancements method of the advancement picker and changes the status
-    // Also displays a title to all the players
+    // Also displays a title to all the players and send them a message
     public void pickAdvancements()
     {
         this.advancementsPicker.pickAdvancements();
@@ -102,10 +102,12 @@ public class Game
         redTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
+            player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
         });
         blueTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
+            player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
         });
 
         this.gameStatus = GameStatus.ADVANCEMENTS_PICKED;

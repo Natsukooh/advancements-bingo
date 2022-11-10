@@ -36,19 +36,6 @@ public class PickCommandHandler extends CommandHandler
             // The advancements are picked (logic for that is not here)
             plugin.getGame().pickAdvancements();
 
-            // Chat messages
-            Bukkit.broadcastMessage("advancements picked !");
-            Bukkit.broadcastMessage("The advancements are: " +
-                    plugin.getGame()
-                            .getAdvancementsPicker()
-                            .getPickedAdvancements()
-                            .keySet()
-                            .stream()
-                            .map(advancement -> advancement.getDisplay().getTitle())
-                            .collect(Collectors.joining(", ")));
-            Bukkit.broadcastMessage("You can now start the game with /ab start, or re-pick the advancements with /ab pick again.");
-            Bukkit.broadcastMessage("To see the advancements list, use the /ab list command");
-
         }
         // If the game status is not "NOT_STARTED" or "ADVANCEMENTS_PICKED", then we send an error message
         else
