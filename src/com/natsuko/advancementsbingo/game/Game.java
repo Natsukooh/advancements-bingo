@@ -104,26 +104,32 @@ public class Game
     {
         this.advancementsPicker.pickAdvancements();
 
-        // create the special ItemStack that a player can right-click to open the advancements list
-        ItemStack item = new ItemStack(Material.PAPER);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("Advancements list");
-        item.setItemMeta(meta);
-
         redTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
             player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
-            player.getInventory().addItem(item);
+            giveAdvancementsListItem(player);
         });
         blueTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
             player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
-            player.getInventory().addItem(item);
+            giveAdvancementsListItem(player);
         });
 
         this.gameStatus = GameStatus.ADVANCEMENTS_PICKED;
+    }
+
+    // Method to give a specific player the special item to open the advancements list
+    public void giveAdvancementsListItem(Player player)
+    {
+        ItemStack item = new ItemStack(Material.PAPER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("Advancements list");
+        meta.setLore(Collections.singletonList("Right-click to open the advancements list"));
+        item.setItemMeta(meta);
+
+        player.getInventory().addItem(item);
     }
 
     // Method to go from the "ADVANCEMENTS_PICKED" to the "PLAYING" status
