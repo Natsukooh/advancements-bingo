@@ -26,7 +26,7 @@ public class PlayerInteractEventListener implements Listener
     public void onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent event)
     {
         // We check if the item is the special item by its name
-        if (event.getItem().getItemMeta().getDisplayName().equals("Advancements list"))
+        if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName().equals("Advancements list"))
         {
             // We have to open the menu only if it is a right-click
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
