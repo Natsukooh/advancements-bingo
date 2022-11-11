@@ -90,45 +90,5 @@ public class ListCommandHandler extends CommandHandler
         {
             commandSender.sendMessage("Error: that command is only possible if the advancements are picked.");
         }
-
-    }
-
-    // Method to create an item representing an advancement
-    // Each advancement has an item to represent it ; we take this item, set its name to the advancement name, and its lore to the description of the advancement
-    private static ItemStack getAdvancementItemDisplay(Advancement advancement, Map<Advancement, Team> advancements)
-    {
-        // First, we create the ItemStack
-        ItemStack itemStack = new ItemStack(advancement.getDisplay().getIcon());
-
-        // Then we get its meta, and set its title and lore
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(advancement.getDisplay().getTitle());
-        List<String> itemLore = new ArrayList<>(Collections.singleton(advancement.getDisplay().getDescription()));
-
-        // If the advancement has already been done by a team, then we replace the item by a colored wool (red or blue) and we add a row to the lore to tell that it is completed
-        Team team = advancements.get(advancement);
-        // If team is not null, then the advancement has already been done
-        if (team != null)
-        {
-            // Depending on which team has done it, we set a blue or red wool and add the right sentence to the lore
-            if (team.equals(Team.BLUE))
-            {
-                itemStack.setType(Material.BLUE_WOOL);
-                itemLore.add("BLUE team has completed this advancement !");
-            }
-
-            if (team.equals(Team.RED))
-            {
-                itemStack.setType(Material.RED_WOOL);
-                itemLore.add("RED team has completed this advancement !");
-            }
-        }
-
-        // Finally we set the title and lore to the item
-        itemMeta.setLore(itemLore);
-        itemStack.setItemMeta(itemMeta);
-
-        // We can now return it
-        return itemStack;
     }
 }
