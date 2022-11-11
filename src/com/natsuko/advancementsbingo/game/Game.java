@@ -120,18 +120,6 @@ public class Game
         this.gameStatus = GameStatus.ADVANCEMENTS_PICKED;
     }
 
-    // Method to give a specific player the special item to open the advancements list
-    private void giveAdvancementsListItem(Player player)
-    {
-        ItemStack item = new ItemStack(Material.PAPER);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("Advancements list");
-        meta.setLore(Collections.singletonList("Right-click to open the advancements list"));
-        item.setItemMeta(meta);
-
-        player.getInventory().addItem(item);
-    }
-
     // Method to go from the "ADVANCEMENTS_PICKED" to the "PLAYING" status
     // We teleport all players to the spawn and change the status
     // We also display a title and play a sound to all the players
@@ -227,20 +215,6 @@ public class Game
         this.gameStatus = GameStatus.ENDING;
     }
 
-    // Method to summon a firework of the desired color
-    // To use when a game ends to add visual effects
-    private void endOfGameFireworks(Team team)
-    {
-        Location location = new Location(Bukkit.getWorld("world"), 0, 203, 0);
-        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        FireworkMeta meta = firework.getFireworkMeta();
-
-        meta.setPower(2);
-        meta.addEffect(FireworkEffect.builder().withColor(team == null ? Color.WHITE : (team.equals(Team.RED) ? Color.RED : Color.BLUE)).flicker(true).build());
-
-        firework.setFireworkMeta(meta);
-    }
-
     // Method to add a player to a team
     // If the player is already part of a team, we return false
     // Else we add them to the team and return true
@@ -249,6 +223,12 @@ public class Game
         // If the player is not already part of a team, we add them to the desired team
         if (!isPlayerPlaying(player))
         {
+            // If the game's status is "ADVANCEMENTS_PICKED", we add to the player's inventory the special item to display the advancements list
+            if (this.gameStatus.equals(GameStatus.ADVANCEMENTS_PICKED))
+            {
+                giveAdvancementsListItem(player);
+            }
+
             if (team.equalsIgnoreCase("blue"))
             {
                 blueTeamPlayers.add(player);
@@ -285,6 +265,7 @@ public class Game
                         .removeEntry(player.getName());
                 this.blueTeamPlayers
                         .remove(player);
+                clearPlayerInventory(player);
                 return true;
 
             case RED:
@@ -293,6 +274,7 @@ public class Game
                         .removeEntry(player.getName());
                 this.redTeamPlayers
                         .remove(player);
+                clearPlayerInventory(player);
                 return true;
 
             default:
@@ -451,6 +433,39 @@ public class Game
 
         // Finally, we display the inventory to the player
         player.openInventory(advancementsList);
+    }
+
+    // Method to summon a firework of the desired color
+    // To use when a game ends to add visual effects
+    private void endOfGameFireworks(Team team)
+    {
+        Location location = new Location(Bukkit.getWorld("world"), 0, 203, 0);
+        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+        FireworkMeta meta = firework.getFireworkMeta();
+
+        meta.setPower(2);
+        meta.addEffect(FireworkEffect.builder().withColor(team == null ? Color.WHITE : (team.equals(Team.RED) ? Color.RED : Color.BLUE)).flicker(true).build());
+
+        firework.setFireworkMeta(meta);
+    }
+
+    // Method to give a specific player the special item to open the advancements list
+    private void giveAdvancementsListItem(Player player)
+    {
+        ItemStack item = new ItemStack(Material.PAPER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("Advancements list");
+        meta.setLore(Collections.singletonList("Right-click to open the advancements list"));
+        item.setItemMeta(meta);
+
+        player.getInventory().addItem(item);
+    }
+
+    // Method to clear a player's inventory
+    // Can be used to remove the special items such as the advancements list item, for example when a player is removed from the game
+    private void clearPlayerInventory(Player player)
+    {
+        player.getInventory().clear();
     }
 
     // Method to create an item representing an advancement
