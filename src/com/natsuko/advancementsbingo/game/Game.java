@@ -395,6 +395,82 @@ public class Game
         }
     }
 
+    // method to display to the desired player the list of the advancements
+    public void showAdvancementsList(Player commandSender)
+    {
+        // Casting the commandSender into a Player
+        Player player = commandSender;
+
+        // Getting the list of the 25 advancements
+        List<Advancement> advancements = getAdvancementsPicker()
+                .getPickedAdvancements()
+                .keySet()
+                .stream()
+                .toList();
+
+        // Instantiating a new Inventory that we will then fill
+        Inventory advancementsList = Bukkit.createInventory(null, 45, "Advancements list");
+
+        // We want the 25 advancements to be displayed in a 5*5 square
+        // The IDs of the slots are between 0 and 8 on each line, plus 9*row
+        // So on each row, we want the items on the slots 2 to 6
+        // The count variable is used to iterate through the advancements list
+        int count = 0;
+        for (int i = 2; i < 45; i += 9)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                // We call the getAdvancementItemDisplay method to get an item corresponding to the advancement to display
+                advancementsList.setItem(i + j, getAdvancementItemDisplay(advancements.get(count), getAdvancementsPicker().getPickedAdvancements()));
+
+                // Don't forget to increase the count to iterate over all the advancements
+                count++;
+            }
+        }
+
+        // Finally, we display the inventory to the player
+        player.openInventory(advancementsList);
+    }
+
+    // Method to create an item representing an advancement
+    // Each advancement has an item to represent it ; we take this item, set its name to the advancement name, and its lore to the description of the advancement
+    private static ItemStack getAdvancementItemDisplay(Advancement advancement, Map<Advancement, Team> advancements)
+    {
+        // First, we create the ItemStack
+        ItemStack itemStack = new ItemStack(advancement.getDisplay().getIcon());
+
+        // Then we get its meta, and set its title and lore
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(advancement.getDisplay().getTitle());
+        List<String> itemLore = new ArrayList<>(Collections.singleton(advancement.getDisplay().getDescription()));
+
+        // If the advancement has already been done by a team, then we replace the item by a colored wool (red or blue) and we add a row to the lore to tell that it is completed
+        Team team = advancements.get(advancement);
+        // If team is not null, then the advancement has already been done
+        if (team != null)
+        {
+            // Depending on which team has done it, we set a blue or red wool and add the right sentence to the lore
+            if (team.equals(Team.BLUE))
+            {
+                itemStack.setType(Material.BLUE_WOOL);
+                itemLore.add("BLUE team has completed this advancement !");
+            }
+
+            if (team.equals(Team.RED))
+            {
+                itemStack.setType(Material.RED_WOOL);
+                itemLore.add("RED team has completed this advancement !");
+            }
+        }
+
+        // Finally we set the title and lore to the item
+        itemMeta.setLore(itemLore);
+        itemStack.setItemMeta(itemMeta);
+
+        // We can now return it
+        return itemStack;
+    }
+
     // Method to build the spawn room
     // 11*11 platform made of barrier (invisible block) with 2 height barrier walls
     private void createSpawnRoom()

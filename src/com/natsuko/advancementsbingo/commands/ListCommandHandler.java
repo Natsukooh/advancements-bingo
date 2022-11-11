@@ -81,39 +81,8 @@ public class ListCommandHandler extends CommandHandler
             // If the commandSender is a player, then we display the inventory
             else
             {
-                // Casting the commandSender into a Player
-                Player player = (Player) commandSender;
-
-                // Getting the list of the 25 advancements
-                List<Advancement> advancements = plugin.getGame()
-                        .getAdvancementsPicker()
-                        .getPickedAdvancements()
-                        .keySet()
-                        .stream()
-                        .toList();
-
-                // Instantiating a new Inventory that we will then fill
-                Inventory advancementsList = Bukkit.createInventory(null, 45, "Advancements list");
-
-                // We want the 25 advancements to be displayed in a 5*5 square
-                // The IDs of the slots are between 0 and 8 on each line, plus 9*row
-                // So on each row, we want the items on the slots 2 to 6
-                // The count variable is used to iterate through the advancements list
-                int count = 0;
-                for (int i = 2; i < 45; i += 9)
-                {
-                    for (int j = 0; j < 5; j++)
-                    {
-                        // We call the getAdvancementItemDisplay method to get an item corresponding to the advancement to display
-                        advancementsList.setItem(i + j, getAdvancementItemDisplay(advancements.get(count), plugin.getGame().getAdvancementsPicker().getPickedAdvancements()));
-
-                        // Don't forget to increase the count to iterate over all the advancements
-                        count++;
-                    }
-                }
-
-                // Finally, we display the inventory to the player
-                player.openInventory(advancementsList);
+                plugin.getGame()
+                        .showAdvancementsList((Player) commandSender);
             }
         }
         // If the status is "NOT_STARTED", we send an error message
