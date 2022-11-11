@@ -121,7 +121,7 @@ public class Game
     }
 
     // Method to give a specific player the special item to open the advancements list
-    public void giveAdvancementsListItem(Player player)
+    private void giveAdvancementsListItem(Player player)
     {
         ItemStack item = new ItemStack(Material.PAPER);
         ItemMeta meta = item.getItemMeta();
