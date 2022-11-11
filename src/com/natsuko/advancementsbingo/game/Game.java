@@ -279,6 +279,7 @@ public class Game
                         .removeEntry(player.getName());
                 this.blueTeamPlayers
                         .remove(player);
+                return true;
 
             case RED:
                 this.scoreboard
@@ -286,6 +287,7 @@ public class Game
                         .removeEntry(player.getName());
                 this.redTeamPlayers
                         .remove(player);
+                return true;
 
             default:
                 return false;
