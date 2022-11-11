@@ -5,11 +5,16 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 // This class represents a game of advancements bingo
 public class Game
@@ -99,15 +104,23 @@ public class Game
     {
         this.advancementsPicker.pickAdvancements();
 
+        // create the special ItemStack that a player can right-click to open the advancements list
+        ItemStack item = new ItemStack(Material.PAPER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("Advancements list");
+        item.setItemMeta(meta);
+
         redTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
             player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
+            player.getInventory().addItem(item);
         });
         blueTeamPlayers.forEach(player -> {
             player.sendTitle("Advancements picked", "You can see them by issuing the /ab list command !", 10, 70, 20);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.2F, 0.5F);
             player.sendMessage("Advancements picked! You can see them by issuing the /ab list command !");
+            player.getInventory().addItem(item);
         });
 
         this.gameStatus = GameStatus.ADVANCEMENTS_PICKED;
