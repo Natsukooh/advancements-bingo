@@ -3,21 +3,11 @@ package com.natsuko.advancementsbingo.commands;
 import com.natsuko.advancementsbingo.Plugin;
 import com.natsuko.advancementsbingo.game.GameStatus;
 import com.natsuko.advancementsbingo.game.Team;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.advancement.Advancement;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 // Class to handle the /ab list command
